@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Library Management System</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --primary: #2f6fed;
+      --primary-dark: #1d4fc8;
+      --success: #20a773;
+      --warning: #f0ad4e;
+      --danger: #e74c3c;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #dfe7f5;
+      --shadow: 0 15px 35px rgba(15, 23, 42, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(135deg, #eef4ff 0%, #f7f9fc 100%);
+      color: var(--text);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    header {
+      background: linear-gradient(120deg, var(--primary), var(--primary-dark));
+      color: white;
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 28px 32px;
+      margin-bottom: 24px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+    }
+
+    .tag {
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.22);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 20px;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .panel-grid {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 24px;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+
+    .panel h2 {
+      margin-top: 0;
+      margin-bottom: 18px;
+      font-size: 1.3rem;
+    }
+
+    form {
+      display: grid;
+      gap: 14px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    label {
+      display: grid;
+      gap: 7px;
+      font-size: 0.9rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    input, select, button {
+      font: inherit;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 11px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      transition: border 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: rgba(47, 111, 237, 0.7);
+      box-shadow: 0 0 0 4px rgba(47, 111, 237, 0.12);
+    }
+
+    .primary-btn, .secondary-btn, .danger-btn {
+      border: none;
+      border-radius: 10px;
+      padding: 11px 14px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: transform 0.15s ease, opacity 0.2s ease;
+    }
+
+    .primary-btn:hover, .secondary-btn:hover, .danger-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .primary-btn {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .secondary-btn {
+      background: rgba(47,111,237,0.12);
+      color: var(--primary);
+    }
+
+    .danger-btn {
+      background: rgba(231,76,60,0.1);
+      color: var(--danger);
+    }
+
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .search-wrap {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .search-wrap input {
+      background: #f9fbff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 14px 10px;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      background: #f5f8ff;
+      color: var(--muted);
+      font-size: 0.8rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    tbody tr:hover {
+      background: #fafcff;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .badge.available {
+      background: rgba(32, 167, 115, 0.1);
+      color: var(--success);
+    }
+
+    .badge.issued {
+      background: rgba(240, 173, 78, 0.12);
+      color: #b7791f;
+    }
+
+    .badge.overdue {
+      background: rgba(231, 76, 60, 0.1);
+      color: var(--danger);
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .small-btn {
+      border: none;
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .small-btn.issue {
+      background: rgba(47,111,237,0.1);
+      color: var(--primary);
+    }
+
+    .small-btn.return {
+      background: rgba(32,167,115,0.1);
+      color: var(--success);
+    }
+
+    .empty-state {
+      text-align: center;
+      color: var(--muted);
+      padding: 30px 15px;
+      font-weight: 600;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.48);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 20;
+    }
+
+    .modal.hidden {
+      display: none;
+    }
+
+    .modal-content {
+      width: min(100%, 420px);
+      background: white;
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .modal-content h3 {
+      margin: 0 0 16px;
+      font-size: 1.4rem;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    @media (max-width: 900px) {
+      .panel-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .row {
+        grid-template-columns: 1fr;
+      }
+
+      .container {
+        padding: 16px;
+      }
+
+      th, td {
+        padding: 10px 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="topbar">
+        <h1>Library Management System</h1>
+        <div class="tag">Catalog Dashboard</div>
+      </div>
+    </header>
+
+    <section class="stats">
+      <div class="stat-card">
+        <div class="stat-label">Total Books</div>
+        <div class="stat-value" id="totalBooks">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Available</div>
+        <div class="stat-value" id="availableBooks">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Issued</div>
+        <div class="stat-value" id="issuedBooks">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Members</div>
+        <div class="stat-value" id="memberCount">0</div>
+      </div>
+    </section>
+
+    <section class="panel-grid">
+      <aside class="panel">
+        <h2>Add New Book</h2>
+        <form id="bookForm">
+          <div class="row">
+            <label>
+              Title
+              <input type="text" id="title" placeholder="e.g. Atomic Habits" required />
+            </label>
+            <label>
+              Author
+              <input type="text" id="author" placeholder="e.g. James Clear" required />
+            </label>
+          </div>
+
+          <div class="row">
+            <label>
+              Category
+              <input type="text" id="category" placeholder="e.g. Self Help" required />
+            </label>
+            <label>
+              ISBN
+              <input type="text" id="isbn" placeholder="e.g. 978-1234567890" required />
+            </label>
+          </div>
+
+          <label>
+            Published Year
+            <input type="number" id="year" min="1000" max="2100" placeholder="2024" required />
+          </label>
+
+          <button type="submit" class="primary-btn">Add Book</button>
+        </form>
+      </aside>
+
+      <main class="panel">
+        <div class="toolbar">
+          <h2 style="margin: 0;">Book Inventory</h2>
+          <div class="search-wrap">
+            <input type="text" id="searchInput" placeholder="Search books, authors, categories..." />
+          </div>
+        </div>
+
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Category</th>
+                <th>ISBN</th>
+                <th>Year</th>
+                <th>Status</th>
+                <th>Issue Date</th>
+                <th>Return Deadline</th>
+                <th>Member</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="bookTableBody"></tbody>
+          </table>
+        </div>
+      </main>
+    </section>
+  </div>
+
+  <div id="issueModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-content">
+      <h3>Issue Book</h3>
+      <form id="issueForm">
+        <label>
+          Member Name
+          <input type="text" id="memberName" placeholder="Enter member name" required />
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="secondary-btn" id="cancelIssue">Cancel</button>
+          <button type="submit" class="primary-btn">Issue Book</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    let books = [];
+
+    const bookTableBody = document.getElementById('bookTableBody');
+    const searchInput = document.getElementById('searchInput');
+    const bookForm = document.getElementById('bookForm');
+    const issueModal = document.getElementById('issueModal');
+    const issueForm = document.getElementById('issueForm');
+    const memberNameInput = document.getElementById('memberName');
+    const cancelIssueButton = document.getElementById('cancelIssue');
+    let selectedBookId = null;
+
+    function formatDate(dateString) {
+      if (!dateString) return '—';
+      const date = new Date(dateString + 'T00:00:00');
+      if (Number.isNaN(date.getTime())) return '—';
+      return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, character => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      })[character]);
+    }
+
+    async function apiRequest(url, options = {}) {
+      const response = await fetch(url, {
+        ...options,
+        headers: { 'Content-Type': 'application/json', ...options.headers }
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.error || 'The request could not be completed.');
+      return result;
+    }
+
+    async function loadBooks() {
+      try {
+        books = await apiRequest('/api/books');
+        renderBooks();
+      } catch (error) {
+        alert(`Could not load books: ${error.message}\nMake sure the server and MongoDB are running.`);
+      }
+    }
+
+    function updateStats() {
+      document.getElementById('totalBooks').textContent = books.length;
+      document.getElementById('availableBooks').textContent = books.filter(b => b.status === 'Available').length;
+      document.getElementById('issuedBooks').textContent = books.filter(b => b.status === 'Issued' || b.status === 'Overdue').length;
+
+      const uniqueMembers = new Set(
+        books
+          .filter(book => book.issuedTo && book.issuedTo.trim())
+          .map(book => book.issuedTo.trim().toLowerCase())
+      );
+      document.getElementById('memberCount').textContent = uniqueMembers.size;
+    }
+
+    function renderBooks() {
+      const searchText = searchInput.value.trim().toLowerCase();
+      const filteredBooks = books.filter(book => {
+        const searchable = `${book.title} ${book.author} ${book.category} ${book.isbn}`.toLowerCase();
+        return searchable.includes(searchText);
+      });
+
+      if (filteredBooks.length === 0) {
+        bookTableBody.innerHTML = `
+          <tr>
+            <td colspan="10" class="empty-state">No books found matching your search.</td>
+          </tr>
+        `;
+        updateStats();
+        return;
+      }
+
+      bookTableBody.innerHTML = filteredBooks.map(book => {
+        const statusClass = book.status.toLowerCase();
+        return `
+          <tr>
+            <td>${escapeHtml(book.title)}</td>
+            <td>${escapeHtml(book.author)}</td>
+            <td>${escapeHtml(book.category)}</td>
+            <td>${escapeHtml(book.isbn)}</td>
+            <td>${escapeHtml(book.year)}</td>
+            <td><span class="badge ${escapeHtml(statusClass)}">${escapeHtml(book.status)}</span></td>
+            <td>${formatDate(book.issueDate)}</td>
+            <td>${formatDate(book.dueDate)}</td>
+            <td>${escapeHtml(book.issuedTo || '—')}</td>
+            <td>
+              <div class="actions">
+                ${book.status === 'Available'
+                  ? `<button class="small-btn issue" data-action="issue" data-id="${escapeHtml(book.id)}">Issue</button>`
+                  : `<button class="small-btn return" data-action="return" data-id="${escapeHtml(book.id)}">Return</button>`}
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      updateStats();
+    }
+
+    async function addBook(event) {
+      event.preventDefault();
+
+      const title = document.getElementById('title').value.trim();
+      const author = document.getElementById('author').value.trim();
+      const category = document.getElementById('category').value.trim();
+      const isbn = document.getElementById('isbn').value.trim();
+      const year = document.getElementById('year').value.trim();
+
+      if (!title || !author || !category || !isbn || !year) {
+        alert('Please fill in all fields before adding a book.');
+        return;
+      }
+
+      try {
+        await apiRequest('/api/books', {
+          method: 'POST',
+          body: JSON.stringify({ title, author, category, isbn, year: Number(year) })
+        });
+        event.target.reset();
+        await loadBooks();
+      } catch (error) {
+        alert(error.message);
+      }
+    }
+
+    function openIssueModal(bookId) {
+      selectedBookId = bookId;
+      issueModal.classList.remove('hidden');
+      issueModal.setAttribute('aria-hidden', 'false');
+      memberNameInput.value = '';
+      memberNameInput.focus();
+    }
+
+    function closeIssueModal() {
+      issueModal.classList.add('hidden');
+      issueModal.setAttribute('aria-hidden', 'true');
+      issueForm.reset();
+      selectedBookId = null;
+    }
+
+    async function issueBook() {
+      if (!selectedBookId) return;
+
+      const memberName = memberNameInput.value.trim();
+      if (!memberName) {
+        alert('Member name is required to issue a book.');
+        memberNameInput.focus();
+        return;
+      }
+
+      try {
+        await apiRequest(`/api/books/${encodeURIComponent(selectedBookId)}/loans`, {
+          method: 'POST',
+          body: JSON.stringify({ memberName })
+        });
+        closeIssueModal();
+        await loadBooks();
+      } catch (error) {
+        alert(error.message);
+      }
+    }
+
+    async function returnBook(bookId) {
+      try {
+        await apiRequest(`/api/books/${encodeURIComponent(bookId)}/return`, { method: 'POST' });
+        await loadBooks();
+      } catch (error) {
+        alert(error.message);
+      }
+    }
+
+    bookForm.addEventListener('submit', addBook);
+    issueForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      issueBook();
+    });
+    cancelIssueButton.addEventListener('click', closeIssueModal);
+
+    searchInput.addEventListener('input', renderBooks);
+
+    bookTableBody.addEventListener('click', (event) => {
+      const button = event.target.closest('button[data-action]');
+      if (!button) return;
+
+      const bookId = button.dataset.id;
+      const action = button.dataset.action;
+
+      if (action === 'issue') openIssueModal(bookId);
+      if (action === 'return') returnBook(bookId);
+    });
+
+    issueModal.addEventListener('click', (event) => {
+      if (event.target === issueModal) {
+        closeIssueModal();
+      }
+    });
+
+    loadBooks();
+  </script>
+</body>
+</html>
